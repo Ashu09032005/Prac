@@ -3,9 +3,10 @@ import fitz  # PyMuPDF
 import requests
 import numpy as np
 from tempfile import NamedTemporaryFile
-from sentence_transformers import SentenceTransformer
-model=SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L3-v2")
 
+# ❌ REMOVE the model from runtime completely
+# from sentence_transformers import SentenceTransformer
+# model = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L3-v2")
 
 def download_pdf(url):
     response = requests.get(url)
@@ -33,9 +34,17 @@ def improved_chunking(text):
                 chunks.append(cleaned)
     return chunks
 
-def embed_chunks_from_url(pdf_url):
+# NEW: Replace embed_chunks_from_url with a function
+# that just returns text chunks (no embedding)
+def process_pdf_chunks(pdf_url):
     pdf_path = download_pdf(pdf_url)
     text = extract_text(pdf_path)
     chunks = improved_chunking(text)
-    embeddings = model.encode(chunks, convert_to_numpy=True, show_progress_bar=False).astype("float32")
-    return chunks, embeddings
+    return chunks
+
+# ➡️ At runtime, separately load precomputed FAISS index & embeddings:
+#   index = faiss.read_index("faiss_index.index")
+#   with open("chunks.txt") as f:
+#       chunks = [line.strip() for line in f]
+# Then, encode the user's QUERY (not chunks) with a small model,
+# and perform search on prebuilt index.
