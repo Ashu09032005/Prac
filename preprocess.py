@@ -5,7 +5,8 @@ import numpy as np
 from tempfile import NamedTemporaryFile
 from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
 
 def download_pdf(url):
     response = requests.get(url)
